@@ -13,9 +13,11 @@ import dotenv from 'dotenv';
 import expressStatusMonitor from 'express-status-monitor';
 import connectDB from './src/config/mongoose';
 import routes from './src/routes';
+import cors from 'cors';
+
 
 // Make all variables from our .env file available in our process
-dotenv.config({ path: '.env.example' });
+dotenv.config();
 
 // Init express server
 const app = express();
@@ -24,6 +26,7 @@ const app = express();
 connectDB();
 
 // Middlewares & configs setup
+app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

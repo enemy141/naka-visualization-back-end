@@ -8,11 +8,11 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findByCredentials(email, password);
     const token = await user.generateAuthToken();
-    res.send({ user, token });
+    res.send({ status: true, user, token });
   } catch (e) {
-    res.status(400).send({
-      error: { message: 'You have entered an invalid email or password' },
-    });
+    res
+      .status(200)
+      .send({ status: false, message: 'You have entered an invalid email or password' });
   }
 };
 

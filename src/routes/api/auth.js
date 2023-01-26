@@ -1,5 +1,5 @@
 import exporess from 'express';
-import auth from '../../config/auth';
+import auth from '../../middleware/jwtVerify';
 import { logoutAll, logout, login } from '../../controllers/auth';
 
 const router = exporess.Router();

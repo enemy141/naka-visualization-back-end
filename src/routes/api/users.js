@@ -1,14 +1,14 @@
 import express from 'express';
-import auth from '../../config/auth';
+import auth from '../../middleware/jwtVerify';
 import { createUser, getUsers, getUserById, updateUser, deleteUser } from '../../controllers/users';
 
 const router = express.Router();
 /**
- * @route   POST /users
+ * @route   PUT /users
  * @desc    Register new user
  * @access  Public
  */
-router.post('/', createUser);
+router.put('/', createUser);
 
 /**
  * @route   GET /users
