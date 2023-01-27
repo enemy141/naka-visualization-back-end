@@ -1,6 +1,6 @@
 import exporess from 'express';
 import auth from '../../middleware/jwtVerify';
-import { logoutAll, logout, login } from '../../controllers/auth';
+import { logoutAll, logout, login, verifyToken } from '../../controllers/auth';
 
 const router = exporess.Router();
 
@@ -24,5 +24,7 @@ router.post('/logout', auth, logout);
  * @access  Private
  */
 router.post('/logoutAll', auth, logoutAll);
+
+router.post('/verify',auth,verifyToken);
 
 export default router;

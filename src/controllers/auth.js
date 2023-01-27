@@ -16,6 +16,11 @@ export const login = async (req, res) => {
   }
 };
 
+export const verifyToken = async (req,res) => {
+  const {user} = req;
+  res.status(200).json({status : true,data: user})
+}
+
 /**
  * @desc Logout a user
  */
