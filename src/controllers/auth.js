@@ -31,7 +31,7 @@ export const logout = async (req, res) => {
       return token.token !== req.token;
     });
     await user.save();
-    res.send({ message: 'You have successfully logged out!' });
+    res.status(200).send({status : true, message: 'You have successfully logged out!' });
   } catch (e) {
     res.status(400).send(e);
   }
