@@ -1,4 +1,5 @@
 import Data from '../models/Data';
+import playerGamePlayDatas from '../models/PlayerGameplayData';
 import {GetAllNation,GetAllGame,GetAllGameTimePlay,GetAllPlayToEarn,GetTransactionCount,GetUsernameCount,GetAllGameplayDate} from '../services/dataServices';
 
 export const createdData = async (req, res) => {
@@ -10,6 +11,73 @@ export const createdData = async (req, res) => {
       res.status(400).send(error);
     });
 };
+
+
+export const getTransactionHistory = async (req, res) => {
+  try {
+    let resData = await playerGamePlayDatas.aggregate([
+      {
+        $lookup: {
+          from: 'profiles',
+          localField: 'player_id',
+          foreignField: '_id',
+          as: 'playerData',
+        },
+      },
+      { $unwind: '$playerData' },
+      {
+        $project: {
+          date: { $dateToString: { format: '%Y-%m-%d', date: '$current_time' } },
+          player_id: '$playerData.username',
+        },
+      },
+      {
+        $group: {
+          _id: {
+            date: '$date',
+            player_id: '$player_id',
+          },
+          amount: { $sum: 1 },
+          player_id: { $sum: '$count' },
+        },
+      },
+      {
+        $group: {
+          _id: '$_id.date',
+          data: {
+            $push: {
+              username: '$_id.player_id',
+              count_play: '$amount',
+              count: { $sum: 1 },
+            },
+          },
+          transaction_count: { $sum: '$amount' },
+        },
+      },
+      { $unwind: '$data' },
+      {
+        $group: {
+          _id: '$_id',
+          player_count: { $sum: '$data.count' },
+          transaction_count: { $addToSet: '$transaction_count' },
+        },
+      },
+      { $unwind: '$transaction_count' },
+      {
+        $project: {
+          player_count: 1,
+          transaction_count: 1,
+          game_per_player: { $divide: ['$transaction_count', '$player_count'] },
+        },
+      },
+      { $sort: { game_per_player: -1 } },
+    ]);
+    res.status(200).json({status : true,data: resData})
+  } catch (e) {
+    res.status(400).send(e);
+  }
+};
+
 
 export const transactionCount = async (req, res) => {
   GetTransactionCount()
