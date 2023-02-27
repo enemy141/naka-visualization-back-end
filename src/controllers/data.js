@@ -1,6 +1,6 @@
 import Data from '../models/Data';
 import playerGamePlayDatas from '../models/PlayerGameplayData';
-import {GetAllNation,GetAllGame,GetAllGameTimePlay,GetAllPlayToEarn,GetTransactionCount,GetUsernameCount,GetAllGameplayDate} from '../services/dataServices';
+import {GetAllUsername,GetAllNation,GetAllGame,GetAllGameTimePlay,GetAllPlayToEarn,GetTransactionCount,GetTransactionCountByDate,GetUsernameCount,GetAllGameplayDate} from '../services/dataServices';
 
 export const createdData = async (req, res) => {
   Data.insertMany(req.body)
@@ -62,6 +62,7 @@ export const getTransactionHistory = async (req, res) => {
           transaction_count: { $addToSet: '$transaction_count' },
         },
       },
+      { $sort: { _id: -1 } },
       { $unwind: '$transaction_count' },
       {
         $project: {
@@ -69,8 +70,7 @@ export const getTransactionHistory = async (req, res) => {
           transaction_count: 1,
           game_per_player: { $divide: ['$transaction_count', '$player_count'] },
         },
-      },
-      { $sort: { game_per_player: -1 } },
+      }
     ]);
     res.status(200).json({status : true,data: resData})
   } catch (e) {
@@ -78,6 +78,17 @@ export const getTransactionHistory = async (req, res) => {
   }
 };
 
+export const transactionCountByDate = async (req, res) => {
+  let data = req.body;
+  GetTransactionCountByDate(data.date,data.range)
+  .then(data => {
+    const result = data;
+    res.status(200).json({ status: true, result });
+  })
+  .catch(err => {
+    res.status(400).json({ message: err.message });
+  });
+};
 
 export const transactionCount = async (req, res) => {
   GetTransactionCount()
@@ -92,6 +103,17 @@ export const transactionCount = async (req, res) => {
 
 export const usernameCount = async (req, res) => {
   GetUsernameCount()
+  .then(data => {
+    const result = data;
+    res.status(200).json({ status: true, result });
+  })
+  .catch(err => {
+    res.status(400).json({ message: err.message });
+  });
+};
+
+export const allUsername = async (req, res) => {
+  GetAllUsername()
   .then(data => {
     const result = data;
     res.status(200).json({ status: true, result });

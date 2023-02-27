@@ -1,23 +1,23 @@
 import Data from '../models/Data';
 
-const GetTransactionCount = async ()=>{
+const GetTransactionCount = async () => {
   try {
     let data = await Data.find({});
     return data.length;
   } catch (error) {
     throw error;
   }
-}
+};
 
-const GetUsernameCount = async ()=>{
+const GetUsernameCount = async () => {
   try {
     let data = await Data.find({});
-    let username = []
-    for (let obj in data){
-      username.push(data[obj].username)
-  }
+    let username = [];
+    for (let obj in data) {
+      username.push(data[obj].username);
+    }
     const frequency = {};
-    username.forEach(function (username) {
+    username.forEach(function(username) {
       frequency[username] = frequency[username] ? frequency[username] + 1 : 1;
     });
 
@@ -27,102 +27,141 @@ const GetUsernameCount = async ()=>{
   } catch (error) {
     throw error;
   }
-}
+};
 
-const GetAllGameplayDate = async () =>{
+const GetTransactionCountByDate = async (date,range) => {
+  try {
+    let data = await Data.find({
+      createdAt: {
+        $gte: date,
+        $lt: range
+      },
+    });
+
+    return data.length;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const GetAllGameplayDate = async () => {
   try {
     let data = await Data.find({});
-    let GameplayPerDate = []
+    let GameplayPerDate = [];
 
-    for (let obj in data){
-      let dateOnly = data[obj].game_start
-      GameplayPerDate.push([dateOnly.toLocaleDateString(),data[obj].game])
+    for (let obj in data) {
+      let dateOnly = data[obj].game_start;
+      GameplayPerDate.push([dateOnly.toLocaleDateString(), data[obj].game]);
     }
 
     let Group = GameplayPerDate.reduce((acc, curr) => {
       let date = curr[0];
       let store = curr[1];
-    
+
       if (!acc[date]) {
         acc[date] = {};
       }
-    
+
       if (!acc[date][store]) {
         acc[date][store] = 0;
       }
-    
-      acc[date][store]++;
-    
-      return acc;
 
+      acc[date][store]++;
+
+      return acc;
     }, {});
-    
-    let groupedArray = Object.entries(Group)
+
+    let groupedArray = Object.entries(Group);
 
     return groupedArray;
   } catch (error) {
     throw error;
   }
-}
+};
 
-const GetAllGameTimePlay = async () =>{
+const GetAllGameTimePlay = async () => {
   try {
     let data = await Data.find({});
-    let timePlay = []
+    let timePlay = [];
 
-    for (let obj in data){
-      timePlay.push([data[obj].game,data[obj].time_play])
+    for (let obj in data) {
+      timePlay.push([data[obj].game, data[obj].time_play]);
     }
-    
+
     return timePlay;
   } catch (error) {
     throw error;
   }
-}
+};
+
+const GetAllUsername = async () => {
+  try {
+    let data = await Data.find({});
+    let username = [];
+
+    for (let obj in data) {
+      username.push(data[obj].username);
+    }
+
+    return username;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const GetAllNation = async () => {
   try {
     let data = await Data.find({});
-    let nation = []
+    let nation = [];
 
-    for (let obj in data){
-        nation.push(data[obj].country)
+    for (let obj in data) {
+      nation.push(data[obj].country);
     }
-    
+
     return nation;
   } catch (error) {
     throw error;
   }
 };
 
-const GetAllGame = async () =>{
+const GetAllGame = async () => {
   try {
     let data = await Data.find({});
-    let game = []
+    let game = [];
 
-    for (let obj in data){
-      game.push(data[obj].game)
+    for (let obj in data) {
+      game.push(data[obj].game);
     }
-    
+
     return game;
   } catch (error) {
     throw error;
   }
-}
+};
 
-const GetAllPlayToEarn = async () =>{
+const GetAllPlayToEarn = async () => {
   try {
     let data = await Data.find({});
-    let playToEarn = []
+    let playToEarn = [];
 
-    for (let obj in data){
-      playToEarn.push(data[obj].play_to_earn)
+    for (let obj in data) {
+      playToEarn.push(data[obj].play_to_earn);
     }
-    
+
     return playToEarn;
   } catch (error) {
     throw error;
   }
-}
+};
 
-export {GetAllNation,GetAllGame,GetAllGameTimePlay,GetAllPlayToEarn,GetTransactionCount,GetUsernameCount,GetAllGameplayDate}
+export {
+  GetAllUsername,
+  GetAllNation,
+  GetAllGame,
+  GetAllGameTimePlay,
+  GetAllPlayToEarn,
+  GetTransactionCount,
+  GetTransactionCountByDate,
+  GetUsernameCount,
+  GetAllGameplayDate,
+};
